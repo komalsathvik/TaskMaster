@@ -1,12 +1,26 @@
 import React, { useState } from "react";
+type Task = {
+  taskNum: number;
+  taskName: string;
+};
 function Home() {
   const [todo, setTodo] = useState<string>("");
-  const [tasks, setTasks] = useState<string[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (!todo.trim) return;
-    setTasks((prevTasks) => [...prevTasks, todo]);
+    if (!todo.trim()) return;
+    const newTask = {
+      taskNum: Date.now(),
+      taskName: `${todo}`,
+    };
+    setTasks((prevTasks) => [...prevTasks, newTask]);
     setTodo("");
+  };
+  const handleDelete = (taskName: string) => {
+    const updatedTasks = tasks.filter((task) => {
+      return task.taskName !== taskName;
+    });
+    setTasks(updatedTasks);
   };
   return (
     <>
@@ -34,8 +48,21 @@ function Home() {
           <div className="col-6 mt-3 p-5">
             <h1>ALL TASKS</h1>
             <div>
-              {tasks.map((task) => {
-                return <h2>{task}</h2>;
+              {tasks.map((task, index) => {
+                return (
+                  <div key={index}>
+                    <h2 key={index}>
+                      {index + 1}.&nbsp;
+                      {task.taskName}&nbsp;&nbsp;&nbsp;
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleDelete(task.taskName)}
+                      >
+                        delete
+                      </button>
+                    </h2>{" "}
+                  </div>
+                );
               })}
             </div>
           </div>
