@@ -5,6 +5,8 @@ type Task = {
 };
 function Home() {
   const [todo, setTodo] = useState<string>("");
+  const [updatedTask, setUpdatedTask] = useState<string>("");
+  const [editNum, setEditNum] = useState<number>(0);
   const [tasks, setTasks] = useState<Task[]>([]);
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -15,6 +17,17 @@ function Home() {
     };
     setTasks((prevTasks) => [...prevTasks, newTask]);
     setTodo("");
+  };
+  const handleEdit = (newTask: string, taskNum: number) => {
+    const updatedTasks = tasks.map((task) => {
+      if (task.taskNum === taskNum) {
+        return { ...task, taskName: newTask };
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
+    setUpdatedTask("");
+    setEditNum(0);
   };
   const handleDelete = (taskName: string) => {
     const updatedTasks = tasks.filter((task) => {
@@ -54,6 +67,35 @@ function Home() {
                     <h2 key={index}>
                       {index + 1}.&nbsp;
                       {task.taskName}&nbsp;&nbsp;&nbsp;
+                      <button
+                        className="btn btn-info"
+                        onClick={() => {
+                          setEditNum(task.taskNum);
+                        }}
+                      >
+                        edit
+                      </button>
+                      {editNum === task.taskNum ? (
+                        <div>
+                          &nbsp;&nbsp;
+                          <input
+                            value={editNum === task.taskNum ? updatedTask : ""}
+                            onChange={(e) => setUpdatedTask(e.target.value)}
+                          />
+                          &nbsp;&nbsp;
+                          <button
+                            className="btn btn-success"
+                            onClick={() =>
+                              handleEdit(updatedTask, task.taskNum)
+                            }
+                          >
+                            save
+                          </button>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      &nbsp;&nbsp;&nbsp;
                       <button
                         className="btn btn-danger"
                         onClick={() => handleDelete(task.taskName)}
